@@ -1,0 +1,38 @@
+{
+  "compileOnSave": true,
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "Source"
+  ],
+  "typeAcquisition": {
+    "enable": true
+  },
+  "compilerOptions": {
+    "baseUrl": "Source",
+    "alwaysStrict": true,
+    "strict": true,
+    "rootDir": "Source",
+    "outDir": "Dist",
+    "stripInternal": true,
+    "target": "es2017",
+    "lib": [
+      "es2015",
+      "es2016",
+      "es5",
+      "es6",
+      "es2017",
+      "es2018"
+    ],
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    //"noUnusedLocals": true,
+    "downlevelIteration": true,
+    "diagnostics": true,
+    "sourceMap": true
+  }
+}

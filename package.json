@@ -1,0 +1,28 @@
+{
+  "name": "pwntools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "nodemon": "cd Dist && export NODE_PATH=. && nodemon Main.js Workspaces Test",
+    "start": "cd Dist && export NODE_PATH=. && nodemon --inspect-brk Main.js Workspaces Test",
+    "tsc": "tsc -w"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.0",
+    "@types/node": "^10.9.4",
+    "@types/shortid": "0.0.29",
+    "chokidar": "^3.0.2",
+    "express": "^4.17.1",
+    "is-port-reachable": "^2.0.1",
+    "reflect-metadata": "^0.1.12",
+    "shelljs": "^0.8.3",
+    "shortid": "^2.2.14",
+    "typescript": "^2.8.3"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/shelljs": "^0.8.5"
+  }
+}
