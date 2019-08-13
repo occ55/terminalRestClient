@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "IdGen.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../Source/Utils/IdGen.ts"
+  ],
+  "names": [],
+  "mappings": ";;AAAA,mCAAqC;AAGrC;IACC,OAAO,OAAO,oBAAW,CAAC,EAAE,CAAC,CAAC,QAAQ,CAAC,KAAK,CAAC,EAAE,CAAC;AACjD,CAAC;AAFD,oCAEC"
+}

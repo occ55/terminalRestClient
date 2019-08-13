@@ -1,0 +1,39 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+global.helpers = {};
+const Wait_1 = require("./Utils/Wait");
+require("Console");
+require("Protocols/https");
+require("Protocols/http");
+require("Protocols/http2");
+require("Protocols/ws");
+require("Helpers/Body");
+const Init_1 = require("./Init");
+const Tree_1 = require("./Tree");
+const Request_1 = require("./Request");
+async function Main() {
+    console.log("Rest Client");
+    Wait_1.NeverEnd();
+    await Init_1.Init();
+    //console.log(Tree.Root.children[0].request);
+    const req = await Request_1.RequestBuilder.Build(Tree_1.Tree.Root.children[0]);
+    try {
+        await req.Send();
+    }
+    catch (ex) {
+        console.log("main catch", ex);
+    }
+    //console.log();
+    //await req.Send();
+}
+Main();
+/*
+*
+* TODO:
+*  - Output handling and saving
+*  - Handler reutrn form send
+*  -
+*
+*
+* */ 
+//# sourceMappingURL=Main.js.map

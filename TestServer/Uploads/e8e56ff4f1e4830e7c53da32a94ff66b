@@ -1,0 +1,13 @@
+module.exports.Properties = {
+	lib: "node",
+	url: "http://localhost:3000/multipart",
+	method: "POST",
+	sendBody: true,
+	body: {
+		c: [global.helpers.stream.file(`${__dirname}/body.json`), global.helpers.stream.file(`${__dirname}/request.js`)],
+	},
+	//body: require("crypto").randomBytes(50),
+	bodyType: "multipart",
+};
+
+module.exports.ID = "req_3bd6934e7b0b4d219045f8f7f2e4dc21";

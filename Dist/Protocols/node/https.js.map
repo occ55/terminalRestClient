@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "https.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../../Source/Protocols/node/https.ts"
+  ],
+  "names": [],
+  "mappings": ";;AAAA,2CAAmD;AAGnD,WAAmB,SAAQ,iBAAO;IAEjC,YAAY,IAAmB;QAC9B,KAAK,CAAC,IAAI,CAAC,CAAC;QACZ,OAAO,CAAC,GAAG,CAAC,IAAI,CAAC,CAAC;IACnB,CAAC;CAED;AAPD,sBAOC;AAED,mBAAS,CAAC,KAAK,GAAG,KAAK,CAAC"
+}

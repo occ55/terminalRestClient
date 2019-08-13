@@ -1,18 +1,18 @@
 {
   "rules": {
-    "class-name": true,
+    /*"class-name": true,*/
     "indent": {
       "options": [
-        "spaces",
+        "tabs",
         2
       ]
     },
     "interface-over-type-literal": true,
-    "max-line-length": {
+    /*"max-line-length": {
       "options": {
-        "limit": 90
+        "limit": 80
       }
-    },
+    },*/
     "no-conditional-assignment": true,
     "no-duplicate-super": true,
     "no-duplicate-imports": true,
@@ -20,13 +20,13 @@
     "no-var-keyword": true,
     "one-variable-per-declaration": true,
     "prefer-const": true,
-    "semicolon": true,
+    //"semicolon": true,
     "prefer-template": true,
     "space-before-function-paren": false,
     "quotemark": {
       "options": "double"
     },
-    "triple-equals": true,
+    //"triple-equals": true,
     "use-isnan": true,
     "no-empty": false,
     "no-empty-interface": false,

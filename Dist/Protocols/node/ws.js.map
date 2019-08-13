@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "ws.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../../Source/Protocols/node/ws.ts"
+  ],
+  "names": [],
+  "mappings": ";;AAAA,2CAAmD;AAGnD,QAAgB,SAAQ,iBAAO;IAE9B,YAAY,IAAmB;QAC9B,KAAK,CAAC,IAAI,CAAC,CAAC;QACZ,MAAM,IAAI,KAAK,CAAC,iBAAiB,CAAC,CAAC;IACpC,CAAC;CAED;AAPD,gBAOC;AAED,mBAAS,CAAC,EAAE,GAAG,EAAE,CAAC"
+}

@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "RequestType.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../Source/Helpers/RequestType.ts"
+  ],
+  "names": [],
+  "mappings": ""
+}

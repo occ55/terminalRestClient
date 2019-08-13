@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "Require.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../Source/Utils/Require.ts"
+  ],
+  "names": [],
+  "mappings": ";;AAAA,qBAA4B,MAAc;IACzC,OAAO,OAAO,CAAC,KAAK,CAAC,OAAO,CAAC,OAAO,CAAC,MAAM,CAAC,CAAC,CAAC;IAC9C,OAAO,OAAO,CAAC,MAAM,CAAC,CAAC;AACxB,CAAC;AAHD,kCAGC"
+}

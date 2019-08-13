@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "Global.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../Source/Helpers/Global.ts"
+  ],
+  "names": [],
+  "mappings": ""
+}

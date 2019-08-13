@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "Request.js",
+  "sourceRoot": "",
+  "sources": [
+    "../Source/Request.ts"
+  ],
+  "names": [],
+  "mappings": ";;AAGa,QAAA,SAAS,GAAmC,EAAE,CAAC;AAE5D;IAGC,IAAI,KAAI,CAAC;IAET,KAAK,CACJ,MAAa,EACb,UAAkB,EAClB,OAAY,EACZ,GAAQ,EACR,YAAqB,IACnB,CAAC;CACJ;AAZD,0BAYC"
+}
