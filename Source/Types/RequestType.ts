@@ -63,6 +63,7 @@ export interface IBuiltRequest {
 	body: IBody,
 	query: Record<string, any>,
 	header: Record<string, any>,
+	directory: string;
 }
 
 export interface IAnyRequest {

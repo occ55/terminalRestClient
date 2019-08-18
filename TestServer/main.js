@@ -17,12 +17,12 @@ const rawParser = bodyParser.raw({
 
 app.use("/get", rawParser, async (req, res) => {
 	console.log(req.method, req.body.length, req.body.toString("utf8"));
-	res.status(200).send("OK");
+	res.status(200).json({ Status: 200 });
 });
 
 app.use("/multipart", upload.none(), async (req, res) => {
 	console.log(req.method, req.query, req.body, req.files);
-	res.status(200).send("OK");
+	res.status(200).json({ Status: 200 });
 });
 
 app.use("/body/json", jsonParser, async (req, res) => {

@@ -124,6 +124,9 @@ export class Tree {
 		for (const file of files) {
 			const filePath = join(Path, file);
 			if (statSync(filePath).isDirectory()) {
+				if (file === "Out") {
+					continue;
+				}
 				fns.push(async () => {
 					const cnode = await this.CreateNode(filePath, node);
 					node.children.push(cnode);
@@ -192,7 +195,6 @@ export class Tree {
 						: module;
 				},
 			);
-			//console.log(parentDefC, parentC, currentContext);
 			node.contextModuleMap[cIdent] =
 				{ ...parentDefC, ...parentC, ...moduleObj };
 		}

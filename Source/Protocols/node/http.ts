@@ -1,11 +1,12 @@
 import { HttpRequestBuilder } from "HttpRequestBuilder";
 import * as httpLib from "http";
+import { HttpResults } from "Results/node/HttpResults";
 import { parse, URLSearchParams, UrlWithStringQuery } from "url";
-import { Body } from "../../Helpers/Body";
+import { Body } from "Helpers/Body";
 import * as qs from "querystring";
-import { INode } from "../../Tree";
-import { IBuiltRequest, THttpRequest } from "../../Types/RequestType";
-import { Protocols, Request } from "../../Request";
+import { INode } from "Tree";
+import { IBuiltRequest, THttpRequest } from "Types/RequestType";
+import { Protocols, Request } from "Request";
 
 export class http extends Request {
 
@@ -30,14 +31,15 @@ export class http extends Request {
 		return data;
 	}
 
-	Send(interactive: boolean = false) {
+	Send(interactive: boolean = false): Promise<HttpResults> {
 		return new Promise(async (mainRes, mainRej) => {
+			let requestP: Promise<httpLib.IncomingMessage>;
 			let urlData: UrlWithStringQuery = {} as any;
 			if (this.Data.request.url) {
 				urlData = parse(this.Data.request.url);
 			}
 			let requestRes = () => {};
-			const requestP = new Promise<httpLib.IncomingMessage>((res) => {
+			requestP = new Promise<httpLib.IncomingMessage>((res) => {
 				requestRes = res;
 			});
 			const fullPath = this.Data.request.path || urlData.path || "";
@@ -48,38 +50,34 @@ export class http extends Request {
 					...qs.parse(urlData.query || ""),
 					...qs.parse(pathQuery),
 				}).toString();
-			console.log(queryParams);
-			const clientReq = httpLib.request({
+			const sentReqArgs: httpLib.RequestOptions = {
 				headers: this.Data.header,
 				hostname: this.Data.request.host || urlData.hostname,
 				method: this.Data.request.method,
 				port: this.Data.request.port || urlData.port,
 				path: pathName +
 					(queryParams.length > 0 ? `?${queryParams}` : ""),
-			}, requestRes);
-			clientReq.on("error", (ex) => {
-				mainRej(ex);
-			});
+			};
+			const clientReq = httpLib.request(sentReqArgs, requestRes);
+			const startTime = new Date;
 			if (this.Data.request.sendBody) {
 				const stream = Body.value(this.Data.body);
 				stream.pipe(clientReq);
 			} else {
 				clientReq.end();
 			}
-			const res = await requestP;
-			console.log(res.statusCode);
-			const chunks: Buffer[] = [];
-			res.on("data", function(chunk) {
-				chunks.push(chunk);
-			});
-			res.on("end", function() {
-				const body = Buffer.concat(chunks);
-				mainRes(body);
-				console.log(body.toString());
-			});
-			res.on("error", (ex) => {
+			const results = new HttpResults(
+				clientReq,
+				requestP,
+				this.Data,
+				startTime,
+			);
+			results.sentRequestOptions = sentReqArgs;
+			results.on("error", ex => {
 				mainRej(ex);
 			});
+			mainRes(results);
+			await results.Prepare();
 		});
 	}
 }

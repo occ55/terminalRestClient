@@ -1,3 +1,4 @@
+import { join } from "path";
 import { AcceptedResources, FileTypes, INode, IResource, Tree } from "./Tree";
 import { reqUncached } from "./Utils/Require";
 import { IBuiltRequest, TBodyType, THttpRequest } from "./Types/RequestType";
@@ -268,6 +269,7 @@ export class HttpRequestBuilder {
 			request: req,
 			requestRes: reqRes,
 			requestModule: reqRes.module,
+			directory: join(reqRes.path, ".."),
 		} as IBuiltRequest;
 		if (req.sendBody && built.body && built.body.type === "multipart") {
 			const form = new FormData();

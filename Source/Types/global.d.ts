@@ -10,5 +10,10 @@ declare module NodeJS {
 			body: typeof import("../Helpers/Body").Body,
 			stream: typeof import("../Helpers/Stream").Stream
 		},
+		flags: {
+			saveToDisk: boolean,
+			maxBodyToHoldInMemory: number
+		},
+		dateToString: (time: Date) => string
 	}
 }

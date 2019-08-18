@@ -1,4 +1,4 @@
-import { IBody } from "../Types/RequestType";
+import { IBody } from "Types/RequestType";
 import * as fs from "fs";
 import { Stream } from "./Stream";
 import { URLSearchParams } from "url";

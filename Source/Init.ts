@@ -1,14 +1,29 @@
-import { Explorer } from "./Explorer";
+import { Explorer } from "Explorer";
 import { join } from "path";
-import { Tree } from "./Tree";
+import { Tree } from "Tree";
 
 export async function Init() {
 	InitExplorer();
+	InitFlags();
+	InitVariables();
 	await InitTree();
 }
 
 async function InitTree() {
 	await Tree.Build();
+}
+
+function InitVariables() {
+	global.dateToString = (time: Date) => {
+		return time.toISOString();
+	};
+}
+
+function InitFlags() {
+	global.flags = {
+		maxBodyToHoldInMemory: 1024 * 1024 * 100, //100mb
+		saveToDisk: true,
+	};
 }
 
 function InitExplorer() {

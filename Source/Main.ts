@@ -1,7 +1,9 @@
-import { RequestBuilder } from "./RequestBuilder";
+import { appendFile, readdirSync, writeFile, writeFileSync } from "fs";
+import { RequestBuilder } from "RequestBuilder";
+import { promisify } from "util";
 
 global.helpers = {} as any;
-import { NeverEnd } from "./Utils/Wait";
+import { NeverEnd } from "Utils/Wait";
 import "Console";
 import "Protocols/node/https";
 import "Protocols/node/http";
@@ -9,9 +11,10 @@ import "Protocols/node/http2";
 import "Protocols/node/ws";
 import "Helpers/Body";
 import "Helpers/Stream";
-import { Init } from "./Init";
-import { Tree } from "./Tree";
-import { http } from "./Protocols/node/http";
+import { Init } from "Init";
+import { Tree } from "Tree";
+// tslint:disable-next-line:no-duplicate-imports
+import { http } from "Protocols/node/http";
 
 
 async function Main() {
@@ -21,10 +24,28 @@ async function Main() {
 	//console.log(Tree.Root.children[0].request);
 	const req = await RequestBuilder.Build(Tree.Root.children[0]) as http;
 	try {
-		await req.Send();
+		const result = await req.Send();
+		//await result.complete;
+		console.log(await result.body, result.toJSON());
+		//console.log(result, JSON.stringify(result));
 	} catch (ex) {
 		console.log("main catch", ex);
 	}
+	/*const appendFilep = promisify(appendFile);
+	const buffs: Buffer[] = [];
+	for (let k = 65; k <= 65 + 27; k++) {
+		const buff = Buffer.alloc(1024 * 1024 * 100, String.fromCharCode(k));
+		buffs.push(buff);
+	}
+	console.log(readdirSync("."));
+	writeFileSync("out.txt", "");
+	const ps: Promise<any>[] = [];
+	for (const [i, buff] of buffs.entries()) {
+		ps.push(appendFilep(`out.txt`, buff));
+	}
+	console.log("waiting now");
+	await Promise.all(ps);
+	console.log("done");*/
 	//console.log();
 	//await req.Send();
 }
