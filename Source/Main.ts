@@ -54,12 +54,8 @@ Main();
 
 /*
 * TODO:
-*  - output handling and saving
-*  - handler reutrn form send
-*  - save ederken response headerlarina gore dosya uzantisi
 *  - file contentine gore header yolla, binary icin vs
 *	 - header => headers rename
-*  - global.saveToDisk
 *  - require icin modul hazirlama, jupyter icin
 *  - http2 da server push
 *  - kolay workspace ve request olusturucu
@@ -71,4 +67,17 @@ Main();
 *  - file watcher i acip degisimde tree yi yenilemek, Out klasorleri haric
 *  - fix arrays for qs and form
 *  - requesti dosya olarak vermeden, bulundugun klasorden veya belirtilenden build etme
+*  - redirectleri vs takip et (opsiyonlu)
+* */
+
+/*
+* TODO: Hooks
+*  - [{
+* 		afterResponse: () => {},
+* 		applicable: ["node", "axios-https", "-https", "-"]
+* 	 }]
+*  - before/after request build (before(request) after(builtReq))
+*  - before send
+*  - after response (headers)
+*  - after complete
 * */
