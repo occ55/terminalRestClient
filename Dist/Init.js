@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Explorer_1 = require("./Explorer");
+const Explorer_1 = require("Explorer");
 const path_1 = require("path");
-const Tree_1 = require("./Tree");
+const Tree_1 = require("Tree");
 
 async function Init() {
 	InitExplorer();
+	InitFlags();
+	InitVariables();
 	await InitTree();
 }
 
@@ -13,6 +15,19 @@ exports.Init = Init;
 
 async function InitTree() {
 	await Tree_1.Tree.Build();
+}
+
+function InitVariables() {
+	global.dateToString = (time) => {
+		return time.toISOString();
+	};
+}
+
+function InitFlags() {
+	global.flags = {
+		maxBodyToHoldInMemory: 1024 * 1024 * 100,
+		saveToDisk: true,
+	};
 }
 
 function InitExplorer() {

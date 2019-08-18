@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{@types/es6-collections, @types/es6-shim, @types/eslint, @types/express, @types/node, @types/node-xmpp-core, @types/sequelize}" />
     <includedPredefinedLibrary name="Node.js Core" />
   </component>
 </project>

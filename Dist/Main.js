@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const RequestBuilder_1 = require("./RequestBuilder");
+const RequestBuilder_1 = require("RequestBuilder");
 global.helpers = {};
-const Wait_1 = require("./Utils/Wait");
+const Wait_1 = require("Utils/Wait");
 require("Console");
 require("Protocols/node/https");
 require("Protocols/node/http");
@@ -10,8 +10,8 @@ require("Protocols/node/http2");
 require("Protocols/node/ws");
 require("Helpers/Body");
 require("Helpers/Stream");
-const Init_1 = require("./Init");
-const Tree_1 = require("./Tree");
+const Init_1 = require("Init");
+const Tree_1 = require("Tree");
 
 async function Main() {
 	console.log("Rest Client");
@@ -20,10 +20,28 @@ async function Main() {
 	//console.log(Tree.Root.children[0].request);
 	const req = await RequestBuilder_1.RequestBuilder.Build(Tree_1.Tree.Root.children[0]);
 	try {
-		await req.Send();
+		const result = await req.Send();
+		//await result.complete;
+		console.log(await result.body, result.toJSON());
+		//console.log(result, JSON.stringify(result));
 	} catch (ex) {
 		console.log("main catch", ex);
 	}
+	/*const appendFilep = promisify(appendFile);
+	const buffs: Buffer[] = [];
+	for (let k = 65; k <= 65 + 27; k++) {
+			const buff = Buffer.alloc(1024 * 1024 * 100, String.fromCharCode(k));
+			buffs.push(buff);
+	}
+	console.log(readdirSync("."));
+	writeFileSync("out.txt", "");
+	const ps: Promise<any>[] = [];
+	for (const [i, buff] of buffs.entries()) {
+			ps.push(appendFilep(`out.txt`, buff));
+	}
+	console.log("waiting now");
+	await Promise.all(ps);
+	console.log("done");*/
 	//console.log();
 	//await req.Send();
 }

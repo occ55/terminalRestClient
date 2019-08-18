@@ -96,6 +96,9 @@ class Tree {
 		for (const file of files) {
 			const filePath = path_1.join(Path, file);
 			if (fs_1.statSync(filePath).isDirectory()) {
+				if (file === "Out") {
+					continue;
+				}
 				fns.push(async () => {
 					const cnode = await this.CreateNode(filePath, node);
 					node.children.push(cnode);
@@ -150,7 +153,6 @@ class Tree {
 					? await module(Object.assign({}, parentDefC, parentC))
 					: module;
 			});
-			//console.log(parentDefC, parentC, currentContext);
 			node.contextModuleMap[cIdent] = Object.assign({}, parentDefC, parentC, moduleObj);
 		}
 		this.AllNodes[node.path] = node;

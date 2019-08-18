@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const path_1 = require("path");
 const Tree_1 = require("./Tree");
 const Require_1 = require("./Utils/Require");
 const FormData = require("form-data");
@@ -188,6 +189,7 @@ class HttpRequestBuilder {
 			request: req,
 			requestRes: reqRes,
 			requestModule: reqRes.module,
+			directory: path_1.join(reqRes.path, ".."),
 		};
 		if (req.sendBody && built.body && built.body.type === "multipart") {
 			const form = new FormData();
