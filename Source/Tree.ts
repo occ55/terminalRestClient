@@ -1,7 +1,7 @@
 import { appendFileSync, readdirSync, statSync } from "fs";
-import { join } from "path";
-import { reqUncached } from "./Utils/Require";
-import { RequestIdGen } from "./Utils/IdGen";
+import { join, extname } from "path";
+import { reqUncached } from "Utils/Require";
+import { RequestIdGen } from "Utils/IdGen";
 
 
 export enum FileTypes {
@@ -124,7 +124,8 @@ export class Tree {
 		for (const file of files) {
 			const filePath = join(Path, file);
 			if (statSync(filePath).isDirectory()) {
-				if (file === "Out") {
+				if (file === "Out" || file.startsWith(".") || extname(file)
+					=== "disabled") {
 					continue;
 				}
 				fns.push(async () => {
