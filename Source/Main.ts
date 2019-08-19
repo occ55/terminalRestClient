@@ -68,6 +68,12 @@ Main();
 *  - fix arrays for qs and form
 *  - requesti dosya olarak vermeden, bulundugun klasorden veya belirtilenden build etme
 *  - redirectleri vs takip et (opsiyonlu)
+*  - kullanisli scriptler
+*  - middleware diyagrami
+*  - request manager, cancel vs icin
+*  - webstorm plugin?
+*  - dateToString kalsin ama yerine responseNameGen (req) => string, ayni isimde varsa silmeyi ekle
+*  - moddule yada plugin tarzi bir yapi, protokol helper vs eklemek icin (ilk defa tree olusunca yuklenmesi icin)
 * */
 
 /*
