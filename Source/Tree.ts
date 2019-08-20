@@ -1,5 +1,5 @@
 import { appendFileSync, readdirSync, statSync } from "fs";
-import { join, extname } from "path";
+import { extname, join } from "path";
 import { reqUncached } from "Utils/Require";
 import { RequestIdGen } from "Utils/IdGen";
 

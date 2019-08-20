@@ -2,7 +2,7 @@ import { join } from "path";
 import { AcceptedResources, FileTypes, INode, IResource, Tree } from "./Tree";
 import { reqUncached } from "./Utils/Require";
 import { IBuiltRequest, TBodyType, THttpRequest } from "./Types/RequestType";
-import * as FormData from "form-data";
+const FormData = require("form-data");
 
 export class HttpRequestBuilder {
 	private static async LoadResourceAsObject(

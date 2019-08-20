@@ -38,7 +38,8 @@ export class http extends Request {
 			if (this.Data.request.url) {
 				urlData = parse(this.Data.request.url);
 			}
-			let requestRes = () => {};
+			let requestRes = () => {
+			};
 			requestP = new Promise<httpLib.IncomingMessage>((res) => {
 				requestRes = res;
 			});
@@ -61,7 +62,7 @@ export class http extends Request {
 			const clientReq = httpLib.request(sentReqArgs, requestRes);
 			const startTime = new Date;
 			if (this.Data.request.sendBody) {
-				const stream = Body.value(this.Data.body);
+				const stream = await Body.value(this.Data.body);
 				stream.pipe(clientReq);
 			} else {
 				clientReq.end();

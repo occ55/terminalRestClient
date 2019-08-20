@@ -1,11 +1,13 @@
 import { Explorer } from "Explorer";
 import { join } from "path";
-import { Tree } from "Tree";
+import { INode, Tree } from "Tree";
+import { RequestBuilder } from "./RequestBuilder";
 
 export async function Init() {
 	InitExplorer();
 	InitFlags();
 	InitVariables();
+	InitFunctions();
 	await InitTree();
 }
 
@@ -19,6 +21,18 @@ function InitVariables() {
 	};
 }
 
+function InitFunctions() {
+	global.send = async (
+		res: string | INode,
+		identifier?: string,
+		preferedName?: string
+	) => {
+		const req = await RequestBuilder.Build(res, identifier, preferedName);
+		return await req.Send()
+	};
+}
+
+
 function InitFlags() {
 	global.flags = {
 		maxBodyToHoldInMemory: 1024 * 1024 * 100, //100mb
@@ -31,7 +45,7 @@ function InitExplorer() {
 		new Explorer(join(
 			"../",
 			process.argv[2] || "Workspaces",
-			process.argv[3] || "Test",
+			process.argv[3] || "Proente",
 		));
 	global.$ = global.Ex.$;
 	global.$$ = global.Ex.$$;

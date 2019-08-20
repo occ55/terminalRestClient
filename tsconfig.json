@@ -6,11 +6,13 @@
   "include": [
     "Source"
   ],
+
   "typeAcquisition": {
     "enable": true
   },
   "compilerOptions": {
-    "baseUrl": "Source",
+    "baseUrl": "./Dist",
+    "declaration": true,
     "alwaysStrict": true,
     "strict": true,
     "rootDir": "Source",
@@ -31,7 +33,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     //"noUnusedLocals": true,
-    "downlevelIteration": true,
+    //"downlevelIteration": true,
     "diagnostics": true,
     "sourceMap": true
   }

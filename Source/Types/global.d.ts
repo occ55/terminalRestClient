@@ -1,3 +1,4 @@
+
 declare module NodeJS {
 	interface Global {
 		Ex: import("../Explorer").Explorer,
@@ -14,6 +15,11 @@ declare module NodeJS {
 			saveToDisk: boolean,
 			maxBodyToHoldInMemory: number
 		},
-		dateToString: (time: Date) => string
+		dateToString: (time: Date) => string,
+		send: (
+			res: string | import("../Tree").INode,
+			identifier?: string,
+			preferedName?: string
+		) => Promise<any>
 	}
 }

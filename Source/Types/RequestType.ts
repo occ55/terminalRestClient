@@ -1,7 +1,9 @@
 import * as http from "http";
 import * as http2 from "http2";
 import { INode, IResource } from "../Tree";
+import { Readable } from "stream";
 import * as FormData from "form-data";
+import { ReadStream } from "fs";
 
 export type THttpMethods = "GET" | "POST";
 export type TProtocols = "http" | "https" | "http2" | "ws";
@@ -10,7 +12,7 @@ export type TLibs = "node";
 
 export interface IBody {
 	type: TBodyType,
-	value?: Buffer | string | Record<string, any>,
+	value?: Buffer | string | Record<string, any> | ReadStream,
 	path?: string,
 	form?: FormData
 }

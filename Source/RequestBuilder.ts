@@ -2,6 +2,7 @@ import { INode, IResource, Tree } from "./Tree";
 import { parse } from "url";
 import { IAnyRequest } from "./Types/RequestType";
 import { Protocols, Request } from "./Request";
+import { ExplorerTreeVal } from "./Explorer";
 
 export class RequestBuilder {
 	static async Build(
@@ -9,6 +10,9 @@ export class RequestBuilder {
 		identifier?: string,
 		name?: string,
 	) {
+		if((source as any)[ExplorerTreeVal]) {
+			source = (source as any)[ExplorerTreeVal];
+		}
 		if (typeof source === "string") {
 			source = Tree.Find(n => n.path === source, Tree.Root)[0];
 			if (!source) {

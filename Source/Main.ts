@@ -1,18 +1,11 @@
-import { appendFile, readdirSync, writeFile, writeFileSync } from "fs";
-import { RequestBuilder } from "RequestBuilder";
-import { promisify } from "util";
-
 global.helpers = {} as any;
 import { NeverEnd } from "Utils/Wait";
 import "Console";
-import "Protocols/node/https";
 import "Protocols/node/http";
-import "Protocols/node/http2";
-import "Protocols/node/ws";
 import "Helpers/Body";
 import "Helpers/Stream";
+import { RequestBuilder } from "RequestBuilder";
 import { Init } from "Init";
-import { Tree } from "Tree";
 // tslint:disable-next-line:no-duplicate-imports
 import { http } from "Protocols/node/http";
 
@@ -22,7 +15,7 @@ async function Main() {
 	NeverEnd();
 	await Init();
 	//console.log(Tree.Root.children[0].request);
-	const req = await RequestBuilder.Build(Tree.Root.children[0]) as http;
+	const req = await RequestBuilder.Build((global.$.apiImprovements as any).defectRead) as http;
 	try {
 		const result = await req.Send();
 		//await result.complete;
@@ -74,6 +67,7 @@ Main();
 *  - webstorm plugin?
 *  - dateToString kalsin ama yerine responseNameGen (req) => string, ayni isimde varsa silmeyi ekle
 *  - moddule yada plugin tarzi bir yapi, protokol helper vs eklemek icin (ilk defa tree olusunca yuklenmesi icin)
+*  - bodyType icin default, ilk body json ise veya degilse
 * */
 
 /*
