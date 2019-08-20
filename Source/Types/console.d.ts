@@ -1,3 +1,3 @@
 interface Console {
-  _clear: () => void;
+	_clear: () => void;
 }

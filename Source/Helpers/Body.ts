@@ -1,5 +1,5 @@
-import { IBody } from "Types/RequestType";
 import * as fs from "fs";
+import { IBody } from "../Types/RequestType";
 import { Stream } from "./Stream";
 import { URLSearchParams } from "url";
 import { contentType } from "mime-types";
@@ -8,16 +8,18 @@ import { Readable } from "stream";
 import { ReadStream } from "fs";
 
 const streamLength = require("stream-length");
+import * as fileType from "file-type";
 
-const fileType = require("file-type");
+export class FileStruct {
+	constructor(public path: string) {
+
+	}
+}
 
 export class Body {
 	static async size(body: IBody) {
-		let value = body.value;
-		if (body.value && typeof body.value === "function") {
-			value = await body.value();
-		}
-		if (value && typeof value !== "function") {
+		const value = body.value;
+		if (value) {
 			if (typeof value === "string") {
 				return Buffer.byteLength(value);
 			} else if (Buffer.isBuffer(value)) {
@@ -37,11 +39,8 @@ export class Body {
 	}
 
 	static async value(body: IBody) {
-		let value = body.value;
-		if (body.value && typeof body.value === "function") {
-			value = await body.value();
-		}
-		if (value && typeof value !== "function") {
+		const value = body.value;
+		if (value) {
 			if (typeof value === "string" || Buffer.isBuffer(value)) {
 				return Stream.from(value);
 			} else if (value instanceof ReadStream) {
@@ -76,10 +75,16 @@ export class Body {
 			} else if (body.type === "binary") {
 				const fileStream = await Body.value(body);
 				const stream = await fileType.stream(fileStream);
-				return stream.fileType ? stream.fileType.mime : "application/octet-stream";
+				return stream.fileType
+					? stream.fileType.mime
+					: "application/octet-stream";
 			}
 		}
 		return "application/octet-stream";
+	}
+
+	static file(path: string) {
+		return new FileStruct(path);
 	}
 }
 

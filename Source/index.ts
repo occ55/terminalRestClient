@@ -1,21 +1,21 @@
 global.helpers = {} as any;
-import { NeverEnd } from "Utils/Wait";
-import "Console";
-import "Protocols/node/http";
-import "Helpers/Body";
-import "Helpers/Stream";
-import { RequestBuilder } from "RequestBuilder";
-import { Init } from "Init";
+import { NeverEnd } from "./Utils/Wait";
+import "./Console";
+import "./Protocols/node/http";
+import "./Helpers/Body";
+import "./Helpers/Stream";
+import { RequestBuilder } from "./RequestBuilder";
+import { Init } from "./Init";
 // tslint:disable-next-line:no-duplicate-imports
-import { http } from "Protocols/node/http";
+import { http } from "./Protocols/node/http";
 
 
-async function Main() {
+async function Index() {
 	console.log("Rest Client");
 	NeverEnd();
 	await Init();
 	//console.log(Tree.Root.children[0].request);
-	const req = await RequestBuilder.Build((global.$.apiImprovements as any).defectRead) as http;
+	/*const req = await RequestBuilder.Build((global.$.LocalBin as any)) as http;
 	try {
 		const result = await req.Send();
 		//await result.complete;
@@ -23,7 +23,7 @@ async function Main() {
 		//console.log(result, JSON.stringify(result));
 	} catch (ex) {
 		console.log("main catch", ex);
-	}
+	}*/
 	/*const appendFilep = promisify(appendFile);
 	const buffs: Buffer[] = [];
 	for (let k = 65; k <= 65 + 27; k++) {
@@ -43,7 +43,7 @@ async function Main() {
 	//await req.Send();
 }
 
-Main();
+Index();
 
 /*
 * TODO:
@@ -67,7 +67,7 @@ Main();
 *  - webstorm plugin?
 *  - dateToString kalsin ama yerine responseNameGen (req) => string, ayni isimde varsa silmeyi ekle
 *  - moddule yada plugin tarzi bir yapi, protokol helper vs eklemek icin (ilk defa tree olusunca yuklenmesi icin)
-*  - bodyType icin default, ilk body json ise veya degilse
+*  - ilk 10 disindaki request gecmisini zip icinde sakla
 * */
 
 /*

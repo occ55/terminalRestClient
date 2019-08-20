@@ -1,87 +1,87 @@
 import { join } from "path";
+import { FileStruct } from "./Helpers/Body";
 import { AcceptedResources, FileTypes, INode, IResource, Tree } from "./Tree";
 import { reqUncached } from "./Utils/Require";
 import { IBuiltRequest, TBodyType, THttpRequest } from "./Types/RequestType";
+
 const FormData = require("form-data");
 
 export class HttpRequestBuilder {
-	private static async LoadResourceAsObject(
+	static async LoadResourceAsObject(
 		context: any,
 		req: THttpRequest,
 		resource?: IResource,
+		after?: boolean,
+		built?: IBuiltRequest,
 	) {
 		if (!resource) {
 			return {};
 		}
-		if (resource.type === FileTypes.js) {
-			const moduleObj = reqUncached(resource.path);
-			if (typeof moduleObj === "function") {
-				//normal function
-				return await moduleObj(context, req) || {};
-			} else if (typeof moduleObj.before === "function"
-				|| typeof moduleObj.after === "function") {
-				//before veya after i olan module
-				if (typeof moduleObj.before === "function") {
-					return await (moduleObj.before as any)(context, req) || {};
+		if (after) {
+			if (resource.type === FileTypes.js) {
+				const moduleObj = reqUncached(resource.path);
+				if (typeof moduleObj.before === "function" || typeof moduleObj.after
+					=== "function") {
+					//before veya after i olan module
+					if (typeof moduleObj.after === "function") {
+						return await (moduleObj.after as any)(context, req, built) || {};
+					} else {
+						return {};
+					}
 				} else {
 					return {};
 				}
+			} else if (resource.type === FileTypes.json) {
+				return {};
 			} else {
-				//duz obje
-				return moduleObj;
-			}
-		} else if (resource.type === FileTypes.json) {
-			try {
-				return require(resource.path);
-			} catch (ex) {
-				console.log(`invalid json at ${resource.path}`);
 				return {};
 			}
 		} else {
-			return {};
-		}
-	}
-
-	private static async LoadResourceAsObjectAfter(
-		context: any,
-		req: THttpRequest,
-		built: IBuiltRequest,
-		resource?: IResource,
-	) {
-		if (!resource) {
-			return {};
-		}
-		if (resource.type === FileTypes.js) {
-			const moduleObj = reqUncached(resource.path);
-			if (typeof moduleObj.before === "function" || typeof moduleObj.after
-				=== "function") {
-				//before veya after i olan module
-				if (typeof moduleObj.after === "function") {
-					return await (moduleObj.after as any)(context, req, built) || {};
+			if (resource.type === FileTypes.js) {
+				const moduleObj = reqUncached(resource.path);
+				if (typeof moduleObj === "function") {
+					//normal function
+					return await moduleObj(context, req) || {};
+				} else if (typeof moduleObj.before === "function"
+					|| typeof moduleObj.after === "function") {
+					//before veya after i olan module
+					if (typeof moduleObj.before === "function") {
+						return await (moduleObj.before as any)(context, req) || {};
+					} else {
+						return {};
+					}
 				} else {
+					//duz obje
+					return moduleObj;
+				}
+			} else if (resource.type === FileTypes.json) {
+				try {
+					return require(resource.path);
+				} catch (ex) {
+					console.log(`invalid json at ${resource.path}`);
 					return {};
 				}
 			} else {
 				return {};
 			}
-		} else if (resource.type === FileTypes.json) {
-			return {};
-		} else {
-			return {};
 		}
 	}
 
-	private static async BuildResources(
+	static async BuildResources(
 		source: INode,
 		identifier: string,
 		name: string,
 		context: any,
 		req: THttpRequest,
+		after?: boolean,
+		built?: IBuiltRequest,
 	) {
 		const result = {};
 		const resToPush: Record<string, any>[] = [];
-		if ((req as any)[name]) {
-			resToPush.push((req as any)[name]);
+		if (!after) {
+			if ((req as any)[name]) {
+				resToPush.push((req as any)[name]);
+			}
 		}
 		for (let cNode = source; cNode != null; cNode = cNode.parent!) {
 			const resObj = await Tree.MergeJsonResource(
@@ -89,7 +89,7 @@ export class HttpRequestBuilder {
 				name,
 				identifier,
 				async (r) => {
-					return await this.LoadResourceAsObject(context, req, r);
+					return await this.LoadResourceAsObject(context, req, r, after, built);
 				},
 			);
 			let defResObj: undefined | any;
@@ -99,48 +99,13 @@ export class HttpRequestBuilder {
 					name,
 					"default",
 					async (r) => {
-						return await this.LoadResourceAsObject(context, req, r);
-					},
-				);
-			}
-			if (resObj) {
-				resToPush.push(resObj);
-			}
-			if (defResObj) {
-				resToPush.push(defResObj);
-			}
-		}
-		Object.assign(result, ...resToPush.reverse());
-		return result;
-	}
-
-	private static async BuildResourcesAfter(
-		source: INode,
-		identifier: string,
-		name: string,
-		context: any,
-		req: THttpRequest,
-		built: IBuiltRequest,
-	) {
-		const result = {};
-		const resToPush: Record<string, any>[] = [];
-		for (let cNode = source; cNode != null; cNode = cNode.parent!) {
-			const resObj = await Tree.MergeJsonResource(
-				cNode,
-				name,
-				identifier,
-				async (r) => {
-					return await this.LoadResourceAsObjectAfter(context, req, built, r);
-				},
-			);
-			let defResObj: undefined | any;
-			if (identifier !== "default") {
-				defResObj = await Tree.MergeJsonResource(
-					cNode,
-					name,
-					"default",
-					async (r) => {
-						return await this.LoadResourceAsObjectAfter(context, req, built, r);
+						return await this.LoadResourceAsObject(
+							context,
+							req,
+							r,
+							after,
+							built,
+						);
 					},
 				);
 			}
@@ -182,6 +147,12 @@ export class HttpRequestBuilder {
 			};
 		}
 		if (req.body) {
+			if (req.body instanceof FileStruct) {
+				return {
+					type: bodyType,
+					path: req.body.path,
+				};
+			}
 			return {
 				type: bodyType,
 				value: req.body,
@@ -264,7 +235,7 @@ export class HttpRequestBuilder {
 			identifier,
 			node: source,
 			body: data.body,
-			header: data.header,
+			headers: data.header,
 			query: data.query,
 			request: req,
 			requestRes: reqRes,
@@ -291,12 +262,13 @@ export class HttpRequestBuilder {
 			}
 			Object.assign(
 				data[rt],
-				await this.BuildResourcesAfter(
+				await this.BuildResources(
 					source,
 					identifier,
 					rt,
 					context,
 					req,
+					true,
 					built,
 				),
 			);

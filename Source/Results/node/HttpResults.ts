@@ -9,11 +9,11 @@ import {
 import * as httpLib from "http";
 import * as mime from "mime-types";
 import { join } from "path";
-import { IBuiltRequest } from "Types/RequestType";
 import * as mkdirp from "mkdirp";
 import * as jsdom from "jsdom";
 import { format } from "url";
 import * as xmlParser from "xml-parser";
+import { IBuiltRequest } from "../../Types/RequestType";
 
 export class HttpResults extends EventEmitter {
 	clientRequest: httpLib.ClientRequest;

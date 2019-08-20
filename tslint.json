@@ -15,7 +15,7 @@
     },*/
     "no-conditional-assignment": true,
     "no-duplicate-super": true,
-    "no-duplicate-imports": true,
+    //"no-duplicate-imports": true,
     "no-misused-new": true,
     "no-var-keyword": true,
     "one-variable-per-declaration": true,

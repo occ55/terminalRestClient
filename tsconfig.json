@@ -6,7 +6,6 @@
   "include": [
     "Source"
   ],
-
   "typeAcquisition": {
     "enable": true
   },

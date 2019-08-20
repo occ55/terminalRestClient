@@ -5,6 +5,7 @@ export const Protocols: Record<string, typeof Request> = {};
 
 export class Request {
 	Data: any;
+	Hooks: Record<string, Function>[] = [];
 
 	Send() {}
 
@@ -14,5 +15,6 @@ export class Request {
 		context: any,
 		req: any,
 		preferedName?: string,
+		hooks: any[] = [],
 	) {}
 }

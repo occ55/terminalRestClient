@@ -1,6 +1,7 @@
+import { HttpRequestBuilder } from "./HttpRequestBuilder";
 import { INode, IResource, Tree } from "./Tree";
 import { parse } from "url";
-import { IAnyRequest } from "./Types/RequestType";
+import { IAnyRequest, THttpRequest } from "./Types/RequestType";
 import { Protocols, Request } from "./Request";
 import { ExplorerTreeVal } from "./Explorer";
 
@@ -10,7 +11,7 @@ export class RequestBuilder {
 		identifier?: string,
 		name?: string,
 	) {
-		if((source as any)[ExplorerTreeVal]) {
+		if ((source as any)[ExplorerTreeVal]) {
 			source = (source as any)[ExplorerTreeVal];
 		}
 		if (typeof source === "string") {
@@ -58,8 +59,53 @@ export class RequestBuilder {
 				? req.protocol
 				: parse(req.url || "").protocol!.replace(":", "");
 			protocol = new Protocols[`${req.lib}-${protocolName}`]();
+			req.lib = `${req.lib}-${protocolName}`;
 		}
-		await protocol.Build(source, identifier, context, req, name);
+		await protocol.Build(source, identifier, context, req, name, hooks);
 		return protocol;
+	}
+
+	private static async FindHooks(
+		source: INode,
+		identifier: string,
+		context: any,
+		req: THttpRequest,
+	) {
+		const hooks = [];
+		if ((req as any).hooks) {
+			hooks.push((req as any).hooks);
+		}
+		for (let cNode = source; cNode != null; cNode = cNode.parent!) {
+			const resObj = await Tree.MergeJsonResource(
+				cNode,
+				"hooks",
+				identifier,
+				async (r) => {
+					return await HttpRequestBuilder.LoadResourceAsObject(context, req, r);
+				},
+			);
+			let defResObj: undefined | any;
+			if (identifier !== "default") {
+				defResObj = await Tree.MergeJsonResource(
+					cNode,
+					"hooks",
+					"default",
+					async (r) => {
+						return await HttpRequestBuilder.LoadResourceAsObject(
+							context,
+							req,
+							r,
+						);
+					},
+				);
+			}
+			if (resObj) {
+				hooks.push(resObj);
+			}
+			if (defResObj) {
+				hooks.push(defResObj);
+			}
+		}
+		return hooks;
 	}
 }

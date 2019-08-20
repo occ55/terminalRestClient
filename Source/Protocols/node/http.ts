@@ -1,12 +1,12 @@
-import { HttpRequestBuilder } from "HttpRequestBuilder";
 import * as httpLib from "http";
-import { HttpResults } from "Results/node/HttpResults";
 import { parse, URLSearchParams, UrlWithStringQuery } from "url";
-import { Body } from "Helpers/Body";
 import * as qs from "querystring";
-import { INode } from "Tree";
-import { IBuiltRequest, THttpRequest } from "Types/RequestType";
-import { Protocols, Request } from "Request";
+import { Body } from "../../Helpers/Body";
+import { HttpRequestBuilder } from "../../HttpRequestBuilder";
+import { HttpResults } from "../../Results/node/HttpResults";
+import { INode } from "../../Tree";
+import { IBuiltRequest, THttpRequest } from "../../Types/RequestType";
+import { Protocols, Request } from "../../Request";
 
 export class http extends Request {
 
@@ -18,8 +18,9 @@ export class http extends Request {
 		context: any,
 		req: THttpRequest,
 		preferedName?: string,
+		hooks: any[] = [],
 	) {
-		super.Build(source, identifier, context, req, preferedName);
+		super.Build(source, identifier, context, req, preferedName, hooks);
 		const data = await HttpRequestBuilder.BuildSanitized(
 			source,
 			identifier,
@@ -28,6 +29,7 @@ export class http extends Request {
 			preferedName,
 		);
 		this.Data = data;
+		this.Hooks = hooks;
 		return data;
 	}
 
@@ -52,7 +54,7 @@ export class http extends Request {
 					...qs.parse(pathQuery),
 				}).toString();
 			const sentReqArgs: httpLib.RequestOptions = {
-				headers: this.Data.header,
+				headers: this.Data.headers,
 				hostname: this.Data.request.host || urlData.hostname,
 				method: this.Data.request.method,
 				port: this.Data.request.port || urlData.port,

@@ -1,5 +1,6 @@
 import * as http from "http";
 import * as http2 from "http2";
+import { FileStruct } from "../Helpers/Body";
 import { INode, IResource } from "../Tree";
 import { Readable } from "stream";
 import * as FormData from "form-data";
@@ -8,17 +9,16 @@ import { ReadStream } from "fs";
 export type THttpMethods = "GET" | "POST";
 export type TProtocols = "http" | "https" | "http2" | "ws";
 export type TBodyType = "json" | "xml" | "urlencoded" | "multipart" | "binary";
-export type TLibs = "node";
 
 export interface IBody {
 	type: TBodyType,
-	value?: Buffer | string | Record<string, any> | ReadStream,
+	value?: Buffer | string | Record<string, any>,
 	path?: string,
 	form?: FormData
 }
 
 export interface IRequestNUrl {
-	lib: TLibs,
+	lib: string,
 	method: THttpMethods,
 	url: undefined,
 	host: string,
@@ -36,7 +36,7 @@ export interface IRequestNUrl {
 }
 
 export interface IRequestUrl {
-	lib: TLibs,
+	lib: string,
 	url: string,
 	host: undefined,
 	port: undefined,
@@ -64,12 +64,12 @@ export interface IBuiltRequest {
 	identifier: string,
 	body: IBody,
 	query: Record<string, any>,
-	header: Record<string, any>,
+	headers: Record<string, any>,
 	directory: string;
 }
 
 export interface IAnyRequest {
-	lib: TLibs,
+	lib: string,
 	protocol?: TProtocols,
 	url?: string,
 }

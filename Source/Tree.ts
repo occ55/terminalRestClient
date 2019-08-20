@@ -1,7 +1,7 @@
 import { appendFileSync, readdirSync, statSync } from "fs";
 import { extname, join } from "path";
-import { reqUncached } from "Utils/Require";
-import { RequestIdGen } from "Utils/IdGen";
+import { reqUncached } from "./Utils/Require";
+import { RequestIdGen } from "./Utils/IdGen";
 
 
 export enum FileTypes {
@@ -15,8 +15,9 @@ export const AcceptedResources = [
 	"body",
 	"context",
 	"request",
-	"header",
+	"headers",
 	"query",
+	"hooks",
 ];
 
 export interface IResource<ModuleT = any> {
@@ -112,7 +113,7 @@ export class Tree {
 			children: [],
 			resources: {
 				context: {},
-				header: {},
+				headers: {},
 				request: {},
 				query: {},
 				body: {},

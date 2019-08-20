@@ -1,6 +1,6 @@
-import { Explorer } from "Explorer";
+import { Explorer } from "./Explorer";
 import { join } from "path";
-import { INode, Tree } from "Tree";
+import { INode, Tree } from "./Tree";
 import { RequestBuilder } from "./RequestBuilder";
 
 export async function Init() {
@@ -25,10 +25,10 @@ function InitFunctions() {
 	global.send = async (
 		res: string | INode,
 		identifier?: string,
-		preferedName?: string
+		preferedName?: string,
 	) => {
 		const req = await RequestBuilder.Build(res, identifier, preferedName);
-		return await req.Send()
+		return req.Send();
 	};
 }
 
@@ -43,9 +43,9 @@ function InitFlags() {
 function InitExplorer() {
 	global.Ex =
 		new Explorer(join(
-			"../",
+			__dirname, "../",
 			process.argv[2] || "Workspaces",
-			process.argv[3] || "Proente",
+			process.argv[3] || "Test",
 		));
 	global.$ = global.Ex.$;
 	global.$$ = global.Ex.$$;
