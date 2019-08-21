@@ -20,7 +20,7 @@ export interface IBody {
 export interface IRequestNUrl {
 	lib: string,
 	method: THttpMethods,
-	url: undefined,
+	url?: string,
 	host: string,
 	port: number,
 	protocol: TProtocols,
@@ -57,7 +57,7 @@ export type THttpRequest = IRequestNUrl | IRequestUrl;
 
 export interface IBuiltRequest {
 	context: Record<string, any>,
-	request: THttpRequest,
+	request: IRequestNUrl,
 	requestModule: { ID: string, Properties: Record<string, any> | (() => Record<string, any> | Promise<Record<string, any>>) },
 	node: INode,
 	requestRes: IResource,

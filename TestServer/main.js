@@ -4,6 +4,9 @@ const port = 3000;
 const bodyParser = require("body-parser");
 const multer = require("multer");
 const upload = multer({ dest: "Uploads/" });
+const cookieParser = require("cookie-parser");
+
+app.use(cookieParser());
 
 app.get("/", (req, res) => res.send("OK"));
 
@@ -16,7 +19,27 @@ const rawParser = bodyParser.raw({
 });
 
 app.use("/get", rawParser, async (req, res) => {
-	console.log(req.method, req.body.length, req.body.toString("utf8"));
+	console.log(req.method, req.body.length, req.cookies, req.signedCookies);
+	res.cookie("zxc", "2", {
+		//domain: ".google.com.tr",
+		expires: false,
+		/*httpOnly: true,
+		maxAge: 1000 * 60 * 60 * 10,
+		path: "/",
+		sameSite: true,
+		secure: false,
+		signed: false,*/
+	});
+	res.cookie("zxc2", "3", {
+		//domain: ".google.com.tr",
+		expires: false,
+		/*httpOnly: true,
+		maxAge: 1000 * 60 * 60 * 10,
+		path: "/",
+		sameSite: true,
+		secure: false,
+		signed: false,*/
+	});
 	res.status(200).json({ Status: 200 });
 });
 

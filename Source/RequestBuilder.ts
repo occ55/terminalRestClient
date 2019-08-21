@@ -61,6 +61,7 @@ export class RequestBuilder {
 			protocol = new Protocols[`${req.lib}-${protocolName}`]();
 			req.lib = `${req.lib}-${protocolName}`;
 		}
+		const hooks = await this.FindHooks(source, identifier, context, req);
 		await protocol.Build(source, identifier, context, req, name, hooks);
 		return protocol;
 	}
@@ -69,7 +70,7 @@ export class RequestBuilder {
 		source: INode,
 		identifier: string,
 		context: any,
-		req: THttpRequest,
+		req: IAnyRequest,
 	) {
 		const hooks = [];
 		if ((req as any).hooks) {
@@ -99,13 +100,31 @@ export class RequestBuilder {
 					},
 				);
 			}
-			if (resObj) {
+			if (resObj && this.ApplicableCompare(req.lib, resObj.applicable)) {
 				hooks.push(resObj);
 			}
-			if (defResObj) {
+			if (defResObj && this.ApplicableCompare(req.lib, defResObj.applicable)) {
 				hooks.push(defResObj);
 			}
 		}
 		return hooks;
+	}
+
+	static ApplicableCompare(lib: string, applicable: string[]) {
+		return applicable.reduce((acc, p) => {
+			return acc || this.ProtocolCompare(lib, p);
+		}, false);
+	}
+
+	static ProtocolCompare(p1: string, p2: string) {
+		const ps1 = p1.split("-");
+		const ps2 = p2.split("-");
+		const maxLen = Math.max(ps1.length, ps2.length);
+		for (let k = 0; k < maxLen; k++) {
+			if (!(ps1[k] === "" || ps2[k] === "" || ps1[k] === ps2[k])) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

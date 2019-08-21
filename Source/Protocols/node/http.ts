@@ -5,7 +5,11 @@ import { Body } from "../../Helpers/Body";
 import { HttpRequestBuilder } from "../../HttpRequestBuilder";
 import { HttpResults } from "../../Results/node/HttpResults";
 import { INode } from "../../Tree";
-import { IBuiltRequest, THttpRequest } from "../../Types/RequestType";
+import {
+	IBuiltRequest, IRequestNUrl,
+	IRequestUrl,
+	THttpRequest,
+} from "../../Types/RequestType";
 import { Protocols, Request } from "../../Request";
 
 export class http extends Request {
@@ -21,6 +25,19 @@ export class http extends Request {
 		hooks: any[] = [],
 	) {
 		super.Build(source, identifier, context, req, preferedName, hooks);
+		let urlData: UrlWithStringQuery = {} as any;
+		if (req.url) {
+			urlData = parse(req.url);
+		}
+		const fullPath = req.path || urlData.path || "";
+		const [pathName] = fullPath.split("?");
+		req = {
+			...req,
+			host: req.host || urlData.hostname,
+			port: req.port || parseInt(urlData.port || "80"),
+			path: pathName,
+			protocol: req.protocol || "http",
+		} as IRequestNUrl;
 		const data = await HttpRequestBuilder.BuildSanitized(
 			source,
 			identifier,
@@ -74,6 +91,7 @@ export class http extends Request {
 				requestP,
 				this.Data,
 				startTime,
+				this,
 			);
 			results.sentRequestOptions = sentReqArgs;
 			results.on("error", ex => {

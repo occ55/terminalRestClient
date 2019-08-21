@@ -1,4 +1,3 @@
-
 declare module NodeJS {
 	interface Global {
 		Ex: import("../Explorer").Explorer,
@@ -9,7 +8,8 @@ declare module NodeJS {
 		clear: () => void,
 		helpers: {
 			body: typeof import("../Helpers/Body").Body,
-			stream: typeof import("../Helpers/Stream").Stream
+			stream: typeof import("../Helpers/Stream").Stream,
+			cookie: typeof import("../Helpers/Cookie").Cookie
 		},
 		flags: {
 			saveToDisk: boolean,
@@ -19,7 +19,7 @@ declare module NodeJS {
 		send: (
 			res: string | import("../Tree").INode,
 			identifier?: string,
-			preferedName?: string
+			preferedName?: string,
 		) => Promise<any>
 	}
 }

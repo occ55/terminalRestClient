@@ -2,14 +2,19 @@ import { join } from "path";
 import { FileStruct } from "./Helpers/Body";
 import { AcceptedResources, FileTypes, INode, IResource, Tree } from "./Tree";
 import { reqUncached } from "./Utils/Require";
-import { IBuiltRequest, TBodyType, THttpRequest } from "./Types/RequestType";
+import {
+	IAnyRequest,
+	IBuiltRequest,
+	TBodyType,
+	IRequestNUrl,
+} from "./Types/RequestType";
 
 const FormData = require("form-data");
 
 export class HttpRequestBuilder {
 	static async LoadResourceAsObject(
 		context: any,
-		req: THttpRequest,
+		req: IAnyRequest,
 		resource?: IResource,
 		after?: boolean,
 		built?: IBuiltRequest,
@@ -72,7 +77,7 @@ export class HttpRequestBuilder {
 		identifier: string,
 		name: string,
 		context: any,
-		req: THttpRequest,
+		req: IRequestNUrl,
 		after?: boolean,
 		built?: IBuiltRequest,
 	) {
@@ -125,7 +130,7 @@ export class HttpRequestBuilder {
 		identifier: string,
 		bodyType: TBodyType,
 		context: any,
-		req: THttpRequest,
+		req: IRequestNUrl,
 		preferedName?: string,
 	): Promise<{
 		type: TBodyType,
@@ -190,7 +195,7 @@ export class HttpRequestBuilder {
 		source: INode,
 		identifier: string,
 		context: any,
-		req: THttpRequest,
+		req: IRequestNUrl,
 		preferedName?: string,
 	) {
 		let reqRes: IResource | undefined;

@@ -1,0 +1,17 @@
+{
+  "status": 400,
+  "url": "localhost:3000/get?b=2",
+  "method": "POST",
+  "timePassed": "0.01s",
+  "timePassedMs": 10,
+  "bodyLength": 0,
+  "bodyLengthMb": "0.00 MB",
+  "sentHeaders": {
+    "content-length": {},
+    "content-type": "application/json",
+    "host": "localhost:3000"
+  },
+  "responseHeaders": {
+    "connection": "close"
+  }
+}

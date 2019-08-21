@@ -1,0 +1,24 @@
+{
+  "status": 200,
+  "url": "localhost:3000/get?b=2",
+  "method": "POST",
+  "timePassed": "0.01s",
+  "timePassedMs": 15,
+  "bodyLength": 14,
+  "bodyLengthMb": "0.00 MB",
+  "sentHeaders": {
+    "host": "localhost:3000"
+  },
+  "responseHeaders": {
+    "x-powered-by": "Express",
+    "set-cookie": [
+      "zxc=2; Path=/",
+      "zxc2=3; Path=/"
+    ],
+    "content-type": "application/json; charset=utf-8",
+    "content-length": "14",
+    "etag": "W/\"e-VQUr6TOo8GH4TfodhbCgW3VCUGI\"",
+    "date": "Wed, 21 Aug 2019 20:54:33 GMT",
+    "connection": "close"
+  }
+}

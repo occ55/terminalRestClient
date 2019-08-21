@@ -13,6 +13,7 @@ import * as mkdirp from "mkdirp";
 import * as jsdom from "jsdom";
 import { format } from "url";
 import * as xmlParser from "xml-parser";
+import { http } from "../../Protocols/node/http";
 import { IBuiltRequest } from "../../Types/RequestType";
 
 export class HttpResults extends EventEmitter {
@@ -37,6 +38,8 @@ export class HttpResults extends EventEmitter {
 	startTime: Date;
 	endTime?: Date;
 	responseFolder: string = "";
+	httpRequestParent: http;
+
 
 	toJSON() {
 		if (this.response instanceof Promise) {
@@ -134,6 +137,16 @@ export class HttpResults extends EventEmitter {
 		this.endTime = new Date;
 		this.SaveDetailsToDisk();
 		await this.ParseOutput();
+		for (const hooksObj of this.httpRequestParent.Hooks) {
+			if (typeof hooksObj.afterComplete === "function") {
+				await hooksObj.afterComplete(
+					this.httpRequestParent.Data.context,
+					this.httpRequestParent.Data.request,
+					this.httpRequestParent.Data,
+					this,
+				);
+			}
+		}
 		this._completeResolve(this.rawBody);
 	}
 
@@ -206,11 +219,13 @@ export class HttpResults extends EventEmitter {
 		res: httpLib.IncomingMessage | Promise<httpLib.IncomingMessage>,
 		builtRequest: IBuiltRequest,
 		startTime: Date = new Date,
+		parent: http,
 	) {
 		super();
 		this.clientRequest = req;
 		this.response = res;
 		this.builtRequest = builtRequest;
 		this.startTime = startTime;
+		this.httpRequestParent = parent;
 	}
 }

@@ -4,6 +4,7 @@ import "./Console";
 import "./Protocols/node/http";
 import "./Helpers/Body";
 import "./Helpers/Stream";
+import "./Helpers/Cookie";
 import { RequestBuilder } from "./RequestBuilder";
 import { Init } from "./Init";
 // tslint:disable-next-line:no-duplicate-imports
@@ -15,7 +16,7 @@ async function Index() {
 	NeverEnd();
 	await Init();
 	//console.log(Tree.Root.children[0].request);
-	/*const req = await RequestBuilder.Build((global.$.LocalBin as any)) as http;
+	const req = await RequestBuilder.Build((global.$.LocalBin as any)) as http;
 	try {
 		const result = await req.Send();
 		//await result.complete;
@@ -23,7 +24,7 @@ async function Index() {
 		//console.log(result, JSON.stringify(result));
 	} catch (ex) {
 		console.log("main catch", ex);
-	}*/
+	}
 	/*const appendFilep = promisify(appendFile);
 	const buffs: Buffer[] = [];
 	for (let k = 65; k <= 65 + 27; k++) {
