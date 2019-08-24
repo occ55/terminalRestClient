@@ -1,0 +1,21 @@
+{
+  "status": 400,
+  "url": "google.com:80/",
+  "method": "GET",
+  "timePassed": "0.22s",
+  "timePassedMs": 224,
+  "bodyLength": 1555,
+  "bodyLengthMb": "0.00 MB",
+  "sentHeaders": {
+    "my-header": true,
+    "content-length": 13,
+    "content-type": "application/json",
+    "host": "google.com"
+  },
+  "responseHeaders": {
+    "content-type": "text/html; charset=UTF-8",
+    "referrer-policy": "no-referrer",
+    "content-length": "1555",
+    "date": "Sat, 24 Aug 2019 22:38:15 GMT"
+  }
+}

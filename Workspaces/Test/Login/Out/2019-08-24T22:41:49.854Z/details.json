@@ -2,21 +2,25 @@
   "status": 200,
   "url": "localhost:3000/get?b=2",
   "method": "POST",
-  "timePassed": "0.01s",
-  "timePassedMs": 15,
+  "timePassed": "0.02s",
+  "timePassedMs": 22,
   "bodyLength": 14,
   "bodyLengthMb": "0.00 MB",
   "sentHeaders": {
-    "content-length": 324,
-    "content-type": "application/octet-stream",
+    "content-length": 13,
+    "content-type": "application/json",
     "host": "localhost:3000"
   },
   "responseHeaders": {
     "x-powered-by": "Express",
+    "set-cookie": [
+      "zxc=2; Path=/",
+      "zxc2=3; Path=/"
+    ],
     "content-type": "application/json; charset=utf-8",
     "content-length": "14",
     "etag": "W/\"e-VQUr6TOo8GH4TfodhbCgW3VCUGI\"",
-    "date": "Tue, 20 Aug 2019 16:17:07 GMT",
+    "date": "Sat, 24 Aug 2019 22:41:49 GMT",
     "connection": "close"
   }
 }

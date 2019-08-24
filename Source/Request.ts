@@ -1,5 +1,6 @@
 //lib-protokol
-import { INode } from "./Tree";
+import { INode, IResource } from "./Tree";
+import { IAnyRequest } from "./Types/RequestType";
 
 export const Protocols: Record<string, typeof Request> = {};
 
@@ -11,10 +12,9 @@ export class Request {
 
 	Build(
 		source: INode,
-		identifier: string,
 		context: any,
-		req: any,
-		preferedName?: string,
+		req: IAnyRequest,
 		hooks: any[] = [],
+		reqResource: IResource,
 	) {}
 }

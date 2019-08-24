@@ -19,7 +19,7 @@ const rawParser = bodyParser.raw({
 });
 
 app.use("/get", rawParser, async (req, res) => {
-	console.log(req.method, req.body.length, req.cookies, req.signedCookies);
+	console.log(req.method, req.body.length, req.cookies, req.signedCookies, req.body.toString());
 	res.cookie("zxc", "2", {
 		//domain: ".google.com.tr",
 		expires: false,

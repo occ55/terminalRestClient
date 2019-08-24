@@ -1,7 +1,7 @@
 import { appendFileSync, readdirSync, statSync } from "fs";
 import { extname, join } from "path";
-import { reqUncached } from "./Utils/Require";
 import { RequestIdGen } from "./Utils/IdGen";
+import { reqUncached } from "./Utils/Require";
 
 
 export enum FileTypes {
@@ -37,7 +37,7 @@ export interface INode {
 	resources: {
 		[rtype: string]: Record<string, IResource[]>
 	}
-	contextModuleMap: Record<string, Record<string, any>>;
+	context: Record<string, any>
 }
 
 
@@ -93,18 +93,6 @@ export class Tree {
 		}
 	}
 
-	static FindFirstContext(
-		identifier: string,
-		node: INode,
-	): Record<string, any> {
-		if (identifier in node.contextModuleMap) {
-			return node.contextModuleMap[identifier];
-		} else if (node.parent) {
-			return this.FindFirstContext(identifier, node.parent);
-		} else {
-			return {};
-		}
-	}
 
 	static async CreateNode(Path: string, Parent?: INode): Promise<INode> {
 		const node: INode = {
@@ -118,7 +106,7 @@ export class Tree {
 				query: {},
 				body: {},
 			},
-			contextModuleMap: {},
+			context: Parent ? { ...Parent.context } : {},
 		};
 		const fns: Function[] = [];
 		const files = readdirSync(Path);
@@ -146,60 +134,24 @@ export class Tree {
 				}
 			}
 		}
-		for (const reqIdentifier in node.resources.request) {
-			const resArr = node.resources.request[reqIdentifier];
-			for (const res of resArr) {
-				if (res.type === FileTypes.js && res.resourceType === "request") {
-					let module: { ID: string } = reqUncached(res.path);
-					if (!module.ID) {
-						appendFileSync(
-							res.path,
-							`\nmodule.exports.ID = "${RequestIdGen()}";\n`,
-						);
-						module = reqUncached(res.path);
-					}
-					res.module = module;
-				}
+
+		for (const res of this.ResourceArray(node, "request")) {
+			let module: { ID?: string } = reqUncached(res.path);
+			if (!module.ID) {
+				appendFileSync(
+					res.path,
+					`\nmodule.exports.ID = "${RequestIdGen()}";\n`,
+				);
+				module = reqUncached(res.path);
 			}
+			res.module = module;
 		}
-		//console.log(node.path);
-		//context build
-		if (this.ResExists(node, "context", "default")) {
-			const parentC = this.FindFirstContext("default", node);
-			const moduleObj = await this.MergeJsonResource(
-				node,
-				"context",
-				"default",
-				async r => {
-					const module = reqUncached(r.path);
-					return typeof module === "function"
-						? await module(parentC)
-						: module;
-				},
-			);
-			node.contextModuleMap["default"] =
-				{ ...parentC, ...moduleObj };
+		for (const res of this.ResourceArray(node, "context")) {
+			const module = reqUncached(res.path);
+			await module(node.context, Parent ? Parent.context : {});
 		}
-		for (const cIdent in node.resources.context) {
-			if (cIdent === "default") {
-				continue;
-			}
-			const parentC = this.FindFirstContext(cIdent, node);
-			const parentDefC = this.FindFirstContext("default", node);
-			const moduleObj = await this.MergeJsonResource(
-				node,
-				"context",
-				cIdent,
-				async r => {
-					const module = reqUncached(r.path);
-					return typeof module === "function"
-						? await module({ ...parentDefC, ...parentC })
-						: module;
-				},
-			);
-			node.contextModuleMap[cIdent] =
-				{ ...parentDefC, ...parentC, ...moduleObj };
-		}
+
+
 		this.AllNodes[node.path] = node;
 		await Promise.all(fns.map(f => f()));
 		return node;
@@ -217,6 +169,51 @@ export class Tree {
 			return false;
 		}
 		return node.resources[resName][ident].length > 0;
+	}
+
+	static ResourceArray(node: INode, resName: string) {
+		const resources = node.resources[resName];
+		const acc: IResource[] = [];
+		for (const ident in resources) {
+			for (const res of resources[ident]) {
+				acc.push(res);
+			}
+		}
+		return acc;
+	}
+
+	static* ResourcesFrom(node: INode, resName: string) {
+		while (true) {
+			const resources = node.resources[resName];
+			for (const ident in resources) {
+				for (const res of resources[ident]) {
+					yield res;
+				}
+			}
+			if (!node.parent) {
+				break;
+			}
+			node = node.parent;
+		}
+	}
+
+	static* ResourcesTo(node: INode, resName: string) {
+		const acc: IResource[] = [];
+		while (true) {
+			const resources = node.resources[resName];
+			for (const ident in resources) {
+				for (const res of resources[ident]) {
+					acc.unshift(res);
+				}
+			}
+			if (!node.parent) {
+				break;
+			}
+			node = node.parent;
+		}
+		for (const res of acc) {
+			yield res;
+		}
 	}
 
 	static async MergeJsonResource(

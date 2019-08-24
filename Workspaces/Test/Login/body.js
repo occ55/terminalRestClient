@@ -1,6 +1,3 @@
-/**
- * @param {THttpRequest} req
- * */
-module.exports = (context, req) => {
-	return {};
+module.exports = ({ context, req, previous }) => {
+	previous.b = 2;
 };

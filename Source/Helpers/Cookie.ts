@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { IRequestNUrl } from "../Types/RequestType";
+import { IHttpRequest } from "../Types/RequestType";
 
 export type ICookies = ICookie[];
 
@@ -22,7 +22,7 @@ export class Cookie {
 
 	}
 
-	SetCookies(req: IRequestNUrl, cookieStr: string) {
+	SetCookies(req: IHttpRequest, cookieStrs: string[]) {
 		//const cookies = cookie.parse(cookieStr);
 	}
 

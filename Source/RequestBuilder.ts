@@ -1,15 +1,14 @@
-import { HttpRequestBuilder } from "./HttpRequestBuilder";
-import { INode, IResource, Tree } from "./Tree";
-import { parse } from "url";
-import { IAnyRequest, THttpRequest } from "./Types/RequestType";
-import { Protocols, Request } from "./Request";
 import { ExplorerTreeVal } from "./Explorer";
+import { Protocols } from "./Request";
+import { INode, IResource, Tree } from "./Tree";
+import { IAnyRequest } from "./Types/RequestType";
+import { reqUncached } from "./Utils/Require";
 
 export class RequestBuilder {
 	static async Build(
 		source: string | INode,
-		identifier?: string,
-		name?: string,
+		initialContext: any = {},
+		fileName?: string,
 	) {
 		if ((source as any)[ExplorerTreeVal]) {
 			source = (source as any)[ExplorerTreeVal];
@@ -17,58 +16,31 @@ export class RequestBuilder {
 		if (typeof source === "string") {
 			source = Tree.Find(n => n.path === source, Tree.Root)[0];
 			if (!source) {
-				throw new Error(`Cant form request, ${source}, ${identifier}`);
+				throw new Error(`Cant form request, ${source}, ${fileName}`);
 			}
 		}
-		if (Object.keys(source.resources.request).length === 0 ||
-			(
-				identifier
-				&& !source.resources.request[identifier]
-				&& !source.resources.request["default"])
-		) {
-			throw new Error(`Cant form request with node, ${JSON.stringify(source.path)}, ${identifier}`);
-		}
-		if (!identifier) {
-			if (source.resources.request.default.length > 0) {
-				identifier = "default";
-			} else {
-				identifier = Object.keys(source.resources.request).filter(key =>
-					(source as INode).resources.request[key].length > 0)[0];
-			}
-		}
-		const context = Tree.FindFirstContext(identifier, source);
-		let reqRes: IResource;
-		if (name) {
-			reqRes =
-				source.resources.request[identifier].find(
-					r => r.uniqueName === name) as any;
+		let reqRes: IResource | undefined;
+		const requests = Tree.ResourceArray(source, "request");
+		if (fileName) {
+			reqRes = requests.find(r => r.fileName === fileName);
 		} else {
-			reqRes = source.resources.request[identifier][0];
+			reqRes = requests.find(r => r.idendifier === "default") || requests[0];
 		}
 		if (!reqRes) {
-			throw new Error("Name not found");
+			throw new Error(`Cant form request with node, ${JSON.stringify(source.path)}, ${fileName}`);
 		}
-		const req: IAnyRequest = typeof reqRes.module.Properties === "function"
-			? reqRes.module.Properties(context)
-			: reqRes.module.Properties;
-		let protocol: Request;
-		if (req.lib.split("-").length > 1) {
-			protocol = new Protocols[req.lib]();
-		} else {
-			const protocolName = req.protocol
-				? req.protocol
-				: parse(req.url || "").protocol!.replace(":", "");
-			protocol = new Protocols[`${req.lib}-${protocolName}`]();
-			req.lib = `${req.lib}-${protocolName}`;
-		}
-		const hooks = await this.FindHooks(source, identifier, context, req);
-		await protocol.Build(source, identifier, context, req, name, hooks);
+		const context = { ...source.context, ...initialContext };
+
+		const req: IAnyRequest = await reqRes.module.Properties(context);
+		const protocol = new Protocols[req.lib]();
+		req.identifiers = req.identifiers || ["default", reqRes.idendifier];
+		const hooks = await this.FindHooks(source, context, req);
+		await protocol.Build(source, context, req, hooks, reqRes);
 		return protocol;
 	}
 
 	private static async FindHooks(
 		source: INode,
-		identifier: string,
 		context: any,
 		req: IAnyRequest,
 	) {
@@ -76,35 +48,12 @@ export class RequestBuilder {
 		if ((req as any).hooks) {
 			hooks.push((req as any).hooks);
 		}
-		for (let cNode = source; cNode != null; cNode = cNode.parent!) {
-			const resObj = await Tree.MergeJsonResource(
-				cNode,
-				"hooks",
-				identifier,
-				async (r) => {
-					return await HttpRequestBuilder.LoadResourceAsObject(context, req, r);
-				},
-			);
-			let defResObj: undefined | any;
-			if (identifier !== "default") {
-				defResObj = await Tree.MergeJsonResource(
-					cNode,
-					"hooks",
-					"default",
-					async (r) => {
-						return await HttpRequestBuilder.LoadResourceAsObject(
-							context,
-							req,
-							r,
-						);
-					},
-				);
-			}
-			if (resObj && this.ApplicableCompare(req.lib, resObj.applicable)) {
-				hooks.push(resObj);
-			}
-			if (defResObj && this.ApplicableCompare(req.lib, defResObj.applicable)) {
-				hooks.push(defResObj);
+		for (const hookRes of Tree.ResourcesFrom(source, "hooks")) {
+			if (req.identifiers!.includes(hookRes.idendifier)) {
+				const hook = await reqUncached(hookRes.path)(context);
+				if (this.ApplicableCompare(req.lib, hook.applicable)) {
+					hooks.push(hook);
+				}
 			}
 		}
 		return hooks;

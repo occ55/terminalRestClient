@@ -1,14 +1,14 @@
 global.helpers = {} as any;
-import { NeverEnd } from "./Utils/Wait";
 import "./Console";
-import "./Protocols/node/http";
 import "./Helpers/Body";
-import "./Helpers/Stream";
 import "./Helpers/Cookie";
-import { RequestBuilder } from "./RequestBuilder";
+import "./Helpers/Stream";
 import { Init } from "./Init";
-// tslint:disable-next-line:no-duplicate-imports
+import "./Protocols/node/http";
 import { http } from "./Protocols/node/http";
+import { RequestBuilder } from "./RequestBuilder";
+// tslint:disable-next-line:no-duplicate-imports
+import { NeverEnd } from "./Utils/Wait";
 
 
 async function Index() {
@@ -16,7 +16,10 @@ async function Index() {
 	NeverEnd();
 	await Init();
 	//console.log(Tree.Root.children[0].request);
-	const req = await RequestBuilder.Build((global.$.LocalBin as any)) as http;
+	const req = await RequestBuilder.Build(
+		(global.$.Login as any),
+		{},
+	) as http;
 	try {
 		const result = await req.Send();
 		//await result.complete;
@@ -69,6 +72,7 @@ Index();
 *  - dateToString kalsin ama yerine responseNameGen (req) => string, ayni isimde varsa silmeyi ekle
 *  - moddule yada plugin tarzi bir yapi, protokol helper vs eklemek icin (ilk defa tree olusunca yuklenmesi icin)
 *  - ilk 10 disindaki request gecmisini zip icinde sakla
+*  - hook argumanlarini destructuring ile duzenle
 * */
 
 /*

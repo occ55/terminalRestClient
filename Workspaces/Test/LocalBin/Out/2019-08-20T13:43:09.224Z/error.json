@@ -1,9 +1,0 @@
-{
-  "stack": "Error: connect ECONNREFUSED 127.0.0.1:3000\n    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1056:14)",
-  "message": "connect ECONNREFUSED 127.0.0.1:3000",
-  "errno": "ECONNREFUSED",
-  "code": "ECONNREFUSED",
-  "syscall": "connect",
-  "address": "127.0.0.1",
-  "port": 3000
-}

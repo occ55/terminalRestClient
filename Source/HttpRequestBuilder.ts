@@ -1,234 +1,148 @@
 import { join } from "path";
 import { FileStruct } from "./Helpers/Body";
-import { AcceptedResources, FileTypes, INode, IResource, Tree } from "./Tree";
+import { AcceptedResources, INode, IResource, Tree } from "./Tree";
+import { IBuiltRequest, IHttpRequest, TBodyType } from "./Types/RequestType";
 import { reqUncached } from "./Utils/Require";
-import {
-	IAnyRequest,
-	IBuiltRequest,
-	TBodyType,
-	IRequestNUrl,
-} from "./Types/RequestType";
 
 const FormData = require("form-data");
 
 export class HttpRequestBuilder {
-	static async LoadResourceAsObject(
-		context: any,
-		req: IAnyRequest,
-		resource?: IResource,
-		after?: boolean,
-		built?: IBuiltRequest,
-	) {
-		if (!resource) {
-			return {};
-		}
-		if (after) {
-			if (resource.type === FileTypes.js) {
-				const moduleObj = reqUncached(resource.path);
-				if (typeof moduleObj.before === "function" || typeof moduleObj.after
-					=== "function") {
-					//before veya after i olan module
-					if (typeof moduleObj.after === "function") {
-						return await (moduleObj.after as any)(context, req, built) || {};
-					} else {
-						return {};
-					}
-				} else {
-					return {};
-				}
-			} else if (resource.type === FileTypes.json) {
-				return {};
-			} else {
-				return {};
-			}
-		} else {
-			if (resource.type === FileTypes.js) {
-				const moduleObj = reqUncached(resource.path);
-				if (typeof moduleObj === "function") {
-					//normal function
-					return await moduleObj(context, req) || {};
-				} else if (typeof moduleObj.before === "function"
-					|| typeof moduleObj.after === "function") {
-					//before veya after i olan module
-					if (typeof moduleObj.before === "function") {
-						return await (moduleObj.before as any)(context, req) || {};
-					} else {
-						return {};
-					}
-				} else {
-					//duz obje
-					return moduleObj;
-				}
-			} else if (resource.type === FileTypes.json) {
-				try {
-					return require(resource.path);
-				} catch (ex) {
-					console.log(`invalid json at ${resource.path}`);
-					return {};
-				}
-			} else {
-				return {};
-			}
-		}
-	}
 
-	static async BuildResources(
+	static async ResourceMiddleware(
 		source: INode,
-		identifier: string,
-		name: string,
+		resourceName: string,
 		context: any,
-		req: IRequestNUrl,
+		req: IHttpRequest,
 		after?: boolean,
 		built?: IBuiltRequest,
 	) {
-		const result = {};
-		const resToPush: Record<string, any>[] = [];
-		if (!after) {
-			if ((req as any)[name]) {
-				resToPush.push((req as any)[name]);
+		let result = after ?
+			(built! as any)[resourceName]
+			: ((req as any)[resourceName] ? (req as any)[resourceName] : {});
+
+		for (const res of Tree.ResourcesTo(source, resourceName)) {
+			if (!req.identifiers!.includes(res.idendifier)) {
+				continue;
+			}
+			const module = reqUncached(res.path);
+			if (typeof module.after === "function"
+				|| typeof module.before === "function") {
+				const fn = after ? "after" : "before";
+				if (!(fn in module)) {
+					continue;
+				}
+				const moduleResult = await module[fn]({
+					context,
+					req,
+					previous: result,
+					built: built,
+				});
+				if (moduleResult) {
+					result = moduleResult;
+				}
+			} else if (!after) {
+				const moduleResult = await module({
+					context,
+					req,
+					previous: result,
+				});
+				if (moduleResult) {
+					result = moduleResult;
+				}
 			}
 		}
-		for (let cNode = source; cNode != null; cNode = cNode.parent!) {
-			const resObj = await Tree.MergeJsonResource(
-				cNode,
-				name,
-				identifier,
-				async (r) => {
-					return await this.LoadResourceAsObject(context, req, r, after, built);
-				},
-			);
-			let defResObj: undefined | any;
-			if (identifier !== "default") {
-				defResObj = await Tree.MergeJsonResource(
-					cNode,
-					name,
-					"default",
-					async (r) => {
-						return await this.LoadResourceAsObject(
-							context,
-							req,
-							r,
-							after,
-							built,
-						);
-					},
-				);
-			}
-			if (resObj) {
-				resToPush.push(resObj);
-			}
-			if (defResObj) {
-				resToPush.push(defResObj);
-			}
-		}
-		Object.assign(result, ...resToPush.reverse());
 		return result;
 	}
 
 	private static async BuildBody(
 		source: INode,
-		identifier: string,
 		bodyType: TBodyType,
 		context: any,
-		req: IRequestNUrl,
-		preferedName?: string,
+		req: IHttpRequest,
 	): Promise<{
 		type: TBodyType,
 		value?: string | Buffer | Record<any, string>,
 		path?: string
 	}> {
-		if (bodyType === "json" || bodyType === "urlencoded" ||
-			bodyType === "multipart") {
-			const obj = await this.BuildResources(
-				source,
-				identifier,
-				"body",
-				context,
-				req,
-			);
-			return {
-				type: bodyType,
-				value: obj,
-			};
-		}
+		let bodyInit: any;
 		if (req.body) {
 			if (req.body instanceof FileStruct) {
 				return {
 					type: bodyType,
 					path: req.body.path,
 				};
+			} else if (typeof req.body === "object") {
+				bodyInit = { ...req.body };
+			} else {
+				return {
+					type: bodyType,
+					value: req.body,
+				};
 			}
-			return {
-				type: bodyType,
-				value: req.body,
-			};
+		} else {
+			bodyInit = {};
 		}
-		for (let cNode = source; cNode != null; cNode = cNode.parent!) {
-			const res: undefined | IResource = cNode.resources.body[identifier]
-				.find(r =>
-					preferedName ? r.uniqueName === preferedName : true);
-			let defRes: undefined | IResource;
-			if (identifier !== "default") {
-				defRes = cNode.resources.body.default
-					.find(r =>
-						preferedName ? r.uniqueName === preferedName : true);
+		for (const res of Tree.ResourcesTo(source, "body")) {
+			if (!req.identifiers!.includes(res.idendifier)) {
+				continue;
 			}
-			if (res) {
-				return {
-					type: bodyType,
-					path: res.path,
-				};
-			} else if (defRes) {
-				return {
-					type: bodyType,
-					path: defRes.path,
-				};
+			const module: { before?: Function, after?: Function } | Function
+				= reqUncached(res.path);
+			if (typeof module !== "function") {
+				if (!module.before) {
+					continue;
+				}
+				const moduleResult = await module.before({
+					context,
+					req,
+					previous: bodyInit,
+				});
+				if (moduleResult) {
+					bodyInit = moduleResult;
+				}
+			} else {
+				const moduleResult = await module({
+					context,
+					req,
+					previous: bodyInit,
+				});
+				if (moduleResult) {
+					bodyInit = moduleResult;
+				}
 			}
 		}
 		return {
 			type: bodyType,
+			value: bodyInit,
 		};
 	}
 
 
 	public static async BuildSanitized(
 		source: INode,
-		identifier: string,
 		context: any,
-		req: IRequestNUrl,
-		preferedName?: string,
+		req: IHttpRequest,
+		reqRes: IResource,
 	) {
-		let reqRes: IResource | undefined;
-		if (source.resources.request[identifier].length > 0) {
-			reqRes = source.resources.request[identifier]
-				.find(r => preferedName ? r.uniqueName === preferedName : true);
-		} else if (source.resources.request.default.length > 0) {
-			reqRes = source.resources.request.default
-				.find(r => preferedName ? r.uniqueName === preferedName : true);
-		}
-		if (!reqRes) {
-			throw new Error("No request found");
-		}
 		const data: Record<string, Record<string, any>> = {} as any;
 		for (const rt of AcceptedResources) {
 			if (rt === "request" || rt === "context") {
 				continue;
 			}
 			if (rt === "body") {
-				data[rt] =
-					await this.BuildBody(
-						source,
-						identifier,
-						req.bodyType,
-						context,
-						req,
-						preferedName,
-					);
+				if (req.sendBody) {
+					data[rt] =
+						await this.BuildBody(
+							source,
+							req.bodyType,
+							context,
+							req,
+						);
+				}
 			} else {
 				data[rt] =
-					await this.BuildResources(
+					await this.ResourceMiddleware(
 						source,
-						identifier,
 						rt,
 						context,
 						req,
@@ -237,10 +151,9 @@ export class HttpRequestBuilder {
 		}
 		const built = {
 			context,
-			identifier,
 			node: source,
 			body: data.body,
-			headers: data.header,
+			headers: data.headers,
 			query: data.query,
 			request: req,
 			requestRes: reqRes,
@@ -267,9 +180,8 @@ export class HttpRequestBuilder {
 			}
 			Object.assign(
 				data[rt],
-				await this.BuildResources(
+				await this.ResourceMiddleware(
 					source,
-					identifier,
 					rt,
 					context,
 					req,

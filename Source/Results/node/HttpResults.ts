@@ -2,15 +2,18 @@ import { EventEmitter } from "events";
 import {
 	appendFileSync,
 	createWriteStream,
-	existsSync, readFileSync,
-	statSync, symlinkSync, unlinkSync,
+	existsSync,
+	readFileSync,
+	statSync,
+	symlinkSync,
+	unlinkSync,
 	writeFileSync,
 } from "fs";
 import * as httpLib from "http";
-import * as mime from "mime-types";
-import { join } from "path";
-import * as mkdirp from "mkdirp";
 import * as jsdom from "jsdom";
+import * as mime from "mime-types";
+import * as mkdirp from "mkdirp";
+import { join } from "path";
 import { format } from "url";
 import * as xmlParser from "xml-parser";
 import { http } from "../../Protocols/node/http";

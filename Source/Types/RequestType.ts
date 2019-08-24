@@ -17,12 +17,32 @@ export interface IBody {
 	form?: FormData
 }
 
-export interface IRequestNUrl {
+export interface IAnyRequest {
 	lib: string,
+	protocol?: string,
+	url?: string,
+	identifiers?: string[]
+}
+
+export interface IPreHttpRequest extends IAnyRequest {
+	host?: string,
+	port?: number | string,
+	path?: string,
+	method: THttpMethods,
+	sendBody: boolean,
+	body?: any,
+	bodyType: TBodyType,
+	query?: Record<string, string | string[] | number>,
+	headers?: http.OutgoingHttpHeaders | http2.OutgoingHttpHeaders,
+	//TODO: hooks
+}
+
+
+export interface IHttpRequest extends IAnyRequest {
 	method: THttpMethods,
 	url?: string,
 	host: string,
-	port: number,
+	port: number | string,
 	protocol: TProtocols,
 	path: string,
 	sendBody: boolean,
@@ -30,34 +50,12 @@ export interface IRequestNUrl {
 	bodyType: TBodyType,
 	query?: Record<string, string | string[] | number>,
 	headers?: http.OutgoingHttpHeaders | http2.OutgoingHttpHeaders,
-	//TODO: args ve helpers in tipi
-	beforeRequest?: (args: any, helpers: any) => void | boolean,
-	afterRequest?: (args: any, result: any, helpers: any) => void,
 }
 
-export interface IRequestUrl {
-	lib: string,
-	url: string,
-	host: undefined,
-	port: undefined,
-	path: undefined,
-	method: THttpMethods,
-	sendBody: boolean,
-	protocol: undefined,
-	body?: any,
-	bodyType: TBodyType,
-	query?: Record<string, string | string[] | number>,
-	headers?: http.OutgoingHttpHeaders | http2.OutgoingHttpHeaders,
-	//TODO: args ve helpers in tipi
-	beforeRequest?: (args: any, helpers: any) => void | boolean,
-	afterRequest?: (args: any, result: any, helpers: any) => void,
-}
-
-export type THttpRequest = IRequestNUrl | IRequestUrl;
 
 export interface IBuiltRequest {
 	context: Record<string, any>,
-	request: IRequestNUrl,
+	request: IHttpRequest,
 	requestModule: { ID: string, Properties: Record<string, any> | (() => Record<string, any> | Promise<Record<string, any>>) },
 	node: INode,
 	requestRes: IResource,
@@ -68,8 +66,3 @@ export interface IBuiltRequest {
 	directory: string;
 }
 
-export interface IAnyRequest {
-	lib: string,
-	protocol?: TProtocols,
-	url?: string,
-}

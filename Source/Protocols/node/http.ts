@@ -1,16 +1,12 @@
 import * as httpLib from "http";
-import { parse, URLSearchParams, UrlWithStringQuery } from "url";
 import * as qs from "querystring";
+import { parse, URLSearchParams, UrlWithStringQuery } from "url";
 import { Body } from "../../Helpers/Body";
 import { HttpRequestBuilder } from "../../HttpRequestBuilder";
-import { HttpResults } from "../../Results/node/HttpResults";
-import { INode } from "../../Tree";
-import {
-	IBuiltRequest, IRequestNUrl,
-	IRequestUrl,
-	THttpRequest,
-} from "../../Types/RequestType";
 import { Protocols, Request } from "../../Request";
+import { HttpResults } from "../../Results/node/HttpResults";
+import { INode, IResource } from "../../Tree";
+import { IBuiltRequest, IHttpRequest } from "../../Types/RequestType";
 
 export class http extends Request {
 
@@ -18,13 +14,12 @@ export class http extends Request {
 
 	async Build(
 		source: INode,
-		identifier: string,
 		context: any,
-		req: THttpRequest,
-		preferedName?: string,
+		req: IHttpRequest,
 		hooks: any[] = [],
+		reqResource: IResource,
 	) {
-		super.Build(source, identifier, context, req, preferedName, hooks);
+		super.Build(source, context, req, hooks, reqResource);
 		let urlData: UrlWithStringQuery = {} as any;
 		if (req.url) {
 			urlData = parse(req.url);
@@ -37,13 +32,12 @@ export class http extends Request {
 			port: req.port || parseInt(urlData.port || "80"),
 			path: pathName,
 			protocol: req.protocol || "http",
-		} as IRequestNUrl;
+		} as IHttpRequest;
 		const data = await HttpRequestBuilder.BuildSanitized(
 			source,
-			identifier,
 			context,
 			req,
-			preferedName,
+			reqResource,
 		);
 		this.Data = data;
 		this.Hooks = hooks;

@@ -1,36 +1,29 @@
 /**
  * for standard headers
- * @param {*} context
- * @param {THttpRequest} req
+ * @param {Object} obj
+ * @param {*} obj.context
+ * @param {IHttpRequest} obj.req
+ * @param {*} obj.previous
  * */
-module.exports.before = (context, req) => {
-	/**
-	 * @type {http.OutgoingHttpHeaders}
-	 */
-	return {};
-};
+module.exports.before = ({ context, req, previous }) => {
 
-const ContentTypes = {
-	json: "application/json",
-	xml: "application/xml",
-	form: "application/x-www-form-urlencoded",
 };
 
 /**
  * for standard headers
- * @param {*} context
- * @param {THttpRequest} req
- * @param {IBuiltRequest} built
+ * @param {Object} obj
+ * @param {*} obj.context
+ * @param {IHttpRequest} obj.req
+ * @param {IBuiltRequest} obj.built
+ * @param {*} obj.previous
  * */
-module.exports.after = async (context, req, built) => {
-	const headers = {};
+module.exports.after = async ({ context, req, built, previous }) => {
 	if (req.sendBody && built.body) {
 		if (built.body.form) {
-			Object.assign(headers, built.body.form.getHeaders());
+			Object.assign(previous, built.body.form.getHeaders());
 		} else {
-			headers["Content-Length"] = await global.helpers.body.size(built.body);
-			headers["Content-Type"] = await global.helpers.body.type(built.body);
+			previous["Content-Length"] = await global.helpers.body.size(built.body);
+			previous["Content-Type"] = await global.helpers.body.type(built.body);
 		}
 	}
-	return headers;
 };

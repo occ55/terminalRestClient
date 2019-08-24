@@ -1,7 +1,6 @@
 module.exports = async function(parent) {
-	//return an object
-	return {
+	Object.assign(parent, {
 		t1: 1,
 		override: 1,
-	};
+	});
 };
