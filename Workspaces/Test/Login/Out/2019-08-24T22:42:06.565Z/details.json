@@ -1,0 +1,26 @@
+{
+  "status": 200,
+  "url": "localhost:3000/get?b=2",
+  "method": "POST",
+  "timePassed": "0.01s",
+  "timePassedMs": 10,
+  "bodyLength": 14,
+  "bodyLengthMb": "0.00 MB",
+  "sentHeaders": {
+    "content-length": 7,
+    "content-type": "application/x-www-form-urlencoded",
+    "host": "localhost:3000"
+  },
+  "responseHeaders": {
+    "x-powered-by": "Express",
+    "set-cookie": [
+      "zxc=2; Path=/",
+      "zxc2=3; Path=/"
+    ],
+    "content-type": "application/json; charset=utf-8",
+    "content-length": "14",
+    "etag": "W/\"e-VQUr6TOo8GH4TfodhbCgW3VCUGI\"",
+    "date": "Sat, 24 Aug 2019 22:42:06 GMT",
+    "connection": "close"
+  }
+}

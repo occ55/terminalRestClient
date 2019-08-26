@@ -1,0 +1,23 @@
+{
+  "status": 404,
+  "url": "localhost:3000/?b=2",
+  "method": "POST",
+  "timePassed": "0.01s",
+  "timePassedMs": 13,
+  "bodyLength": 140,
+  "bodyLengthMb": "0.00 MB",
+  "sentHeaders": {
+    "content-length": 7,
+    "content-type": "application/x-www-form-urlencoded",
+    "host": "localhost:3000"
+  },
+  "responseHeaders": {
+    "x-powered-by": "Express",
+    "content-security-policy": "default-src 'none'",
+    "x-content-type-options": "nosniff",
+    "content-type": "text/html; charset=utf-8",
+    "content-length": "140",
+    "date": "Sun, 25 Aug 2019 19:21:25 GMT",
+    "connection": "close"
+  }
+}

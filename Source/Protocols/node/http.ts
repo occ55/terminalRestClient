@@ -28,7 +28,7 @@ export class http extends Request {
 		const [pathName] = fullPath.split("?");
 		req = {
 			...req,
-			host: req.host || urlData.hostname,
+			hostname: req.hostname || urlData.hostname,
 			port: req.port || parseInt(urlData.port || "80"),
 			path: pathName,
 			protocol: req.protocol || "http",
@@ -66,7 +66,7 @@ export class http extends Request {
 				}).toString();
 			const sentReqArgs: httpLib.RequestOptions = {
 				headers: this.Data.headers,
-				hostname: this.Data.request.host || urlData.hostname,
+				hostname: this.Data.request.hostname || urlData.hostname,
 				method: this.Data.request.method,
 				port: this.Data.request.port || urlData.port,
 				path: pathName +
@@ -86,13 +86,13 @@ export class http extends Request {
 				this.Data,
 				startTime,
 				this,
+				sentReqArgs,
 			);
-			results.sentRequestOptions = sentReqArgs;
 			results.on("error", ex => {
 				mainRej(ex);
 			});
 			mainRes(results);
-			await results.Prepare();
+			await results.Init();
 		});
 	}
 }

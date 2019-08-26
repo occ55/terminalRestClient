@@ -1,14 +1,12 @@
+import * as fileType from "file-type";
+// tslint:disable-next-line:no-duplicate-imports
 import * as fs from "fs";
+import { ReadStream } from "fs";
+import { URLSearchParams } from "url";
 import { IBody } from "../Types/RequestType";
 import { Stream } from "./Stream";
-import { URLSearchParams } from "url";
-import { contentType } from "mime-types";
-import { Readable } from "stream";
-// tslint:disable-next-line:no-duplicate-imports
-import { ReadStream } from "fs";
 
 const streamLength = require("stream-length");
-import * as fileType from "file-type";
 
 export class FileStruct {
 	constructor(public path: string) {
@@ -88,4 +86,4 @@ export class Body {
 	}
 }
 
-global.helpers.body = Body;
+global.helpers.Body = Body;

@@ -41,7 +41,7 @@ export interface IPreHttpRequest extends IAnyRequest {
 export interface IHttpRequest extends IAnyRequest {
 	method: THttpMethods,
 	url?: string,
-	host: string,
+	hostname: string,
 	port: number | string,
 	protocol: TProtocols,
 	path: string,

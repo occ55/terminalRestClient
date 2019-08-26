@@ -22,8 +22,8 @@ module.exports.after = async ({ context, req, built, previous }) => {
 		if (built.body.form) {
 			Object.assign(previous, built.body.form.getHeaders());
 		} else {
-			previous["Content-Length"] = await global.helpers.body.size(built.body);
-			previous["Content-Type"] = await global.helpers.body.type(built.body);
+			previous["Content-Length"] = await global.helpers.Body.size(built.body);
+			previous["Content-Type"] = await global.helpers.Body.type(built.body);
 		}
 	}
 };
